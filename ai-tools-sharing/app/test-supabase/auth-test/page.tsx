@@ -133,8 +133,6 @@ export default function AuthTestPage() {
             message: profileError?.message,
             details: profileError?.details,
             hint: profileError?.hint,
-            status: profileError?.status,
-            statusText: profileError?.statusText,
           });
 
           // Check if it's a username conflict
