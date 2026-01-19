@@ -1,10 +1,9 @@
 'use client';
 
 import { createClient } from '@/lib/supabase/client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
 function SignInForm() {
   const [email, setEmail] = useState('');
@@ -49,9 +48,7 @@ function SignInForm() {
               fullname: null,
             } as any); // Type assertion to work around type inference issue
           
-          if (insertError) {
-            console.error('Error creating profile:', insertError);
-          }
+          // Profile creation attempted (error silently ignored)
         }
       }
 

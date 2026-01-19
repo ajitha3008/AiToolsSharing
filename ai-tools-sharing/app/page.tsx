@@ -98,7 +98,6 @@ export default function Home() {
         .order('date_uploaded', { ascending: false });
 
       if (toolsError) {
-        console.error('Error fetching tools:', toolsError);
         setTools([]);
         setLoading(false);
         return;
@@ -146,7 +145,6 @@ export default function Home() {
       
       setTools(filteredData);
     } catch (err) {
-      console.error('Error:', err);
       setTools([]);
     } finally {
       setLoading(false);

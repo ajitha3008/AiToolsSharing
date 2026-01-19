@@ -31,9 +31,7 @@ export default function DashboardPage() {
         .eq('user_id', currentUser.id)
         .order('date_uploaded', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching tools:', error);
-      } else {
+      if (!error) {
         setTools((userTools as any[]) || []);
       }
 
