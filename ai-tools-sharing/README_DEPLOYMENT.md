@@ -5,6 +5,7 @@
 ### 1. Added Middleware (`middleware.ts`)
 - ✅ Handles Supabase auth session refresh on every request
 - ✅ Required for proper authentication in production
+- ⚠️ **Note**: Next.js 16 may show a deprecation warning about middleware. This is safe to ignore - see `MIDDLEWARE_WARNING.md`
 
 ### 2. Fixed Auth Callback Route
 - ✅ Updated `/app/auth/callback/route.ts` to handle Vercel URLs properly
