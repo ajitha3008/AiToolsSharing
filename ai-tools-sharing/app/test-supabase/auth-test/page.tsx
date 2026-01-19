@@ -86,7 +86,8 @@ export default function AuthTestPage() {
         await new Promise(resolve => setTimeout(resolve, 200));
         
         // Verify we still have a session
-        const { data: { user: currentUser, session: currentSession } } = await supabase.auth.getUser();
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
         if (!currentUser || !currentSession) {
           console.warn('Session not available for profile creation');
           setMessage({
