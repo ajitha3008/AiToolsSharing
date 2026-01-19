@@ -13,14 +13,14 @@ export default async function TestSupabasePage() {
   // Fetch profiles for the tools separately
   let profilesMap: Record<string, any> = {};
   if (tools && tools.length > 0) {
-    const userIds = [...new Set(tools.map((tool) => tool.user_id))];
+    const userIds = [...new Set((tools as any[]).map((tool: any) => tool.user_id))];
     const { data: profilesData } = await supabase
       .from('profiles')
       .select('*')
       .in('id', userIds);
 
     if (profilesData) {
-      profilesMap = profilesData.reduce((acc, profile) => {
+      profilesMap = (profilesData as any[]).reduce((acc: Record<string, any>, profile: any) => {
         acc[profile.id] = profile;
         return acc;
       }, {} as Record<string, any>);
@@ -83,7 +83,7 @@ export default async function TestSupabasePage() {
                 ✓ Successfully fetched {tools.length} tool(s)
               </p>
               <div className="space-y-3">
-                {tools.map((tool) => (
+                {(tools as any[]).map((tool: any) => (
                   <div
                     key={tool.id}
                     className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800"
@@ -99,7 +99,7 @@ export default async function TestSupabasePage() {
                         <div className="mt-2 flex flex-wrap gap-2">
                           {tool.hashtags && tool.hashtags.length > 0 && (
                             <>
-                              {tool.hashtags.map((tag, idx) => (
+                              {(tool.hashtags as string[]).map((tag: string, idx: number) => (
                                 <span
                                   key={idx}
                                   className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
@@ -155,7 +155,7 @@ export default async function TestSupabasePage() {
                 ✓ Successfully fetched {profiles.length} profile(s)
               </p>
               <div className="space-y-2">
-                {profiles.map((profile) => (
+                {(profiles as any[]).map((profile: any) => (
                   <div
                     key={profile.id}
                     className="rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800"

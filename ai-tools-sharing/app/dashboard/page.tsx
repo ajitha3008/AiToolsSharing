@@ -34,7 +34,7 @@ export default function DashboardPage() {
       if (error) {
         console.error('Error fetching tools:', error);
       } else {
-        setTools(userTools || []);
+        setTools((userTools as any[]) || []);
       }
 
       setLoading(false);

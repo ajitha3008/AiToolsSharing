@@ -94,7 +94,7 @@ export default function ClientTestPage() {
               </h2>
               {tools.length > 0 ? (
                 <div className="space-y-3">
-                  {tools.map((tool) => (
+                  {(tools as any[]).map((tool: any) => (
                     <div
                       key={tool.id}
                       className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800"

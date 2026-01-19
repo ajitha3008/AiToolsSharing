@@ -120,7 +120,7 @@ export default function Home() {
       // Create a map of user_id to profile
       const profilesMap: Record<string, any> = {};
       if (profilesData) {
-        profilesData.forEach(profile => {
+        (profilesData as any[]).forEach((profile: any) => {
           profilesMap[profile.id] = profile;
         });
       }
