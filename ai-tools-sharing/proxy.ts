@@ -1,23 +1,23 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-// Middleware runs on Edge Runtime by default in Next.js
-// This is correct for Supabase SSR - no need to specify runtime
-export async function middleware(request: NextRequest) {
+// In Next.js 16, middleware.ts is deprecated - use proxy.ts instead
+// proxy.ts runs on Node.js runtime (not Edge), which resolves __dirname issues
+export async function proxy(request: NextRequest) {
   // Check if environment variables are set
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   // If Supabase is not configured, continue without auth
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('[Middleware] Missing environment variables:', {
+    console.error('[Proxy] Missing environment variables:', {
       hasUrl: !!supabaseUrl,
       hasKey: !!supabaseAnonKey,
     });
     return NextResponse.next();
   }
 
-  // Create a mutable response object for Edge runtime
+  // Create a mutable response object
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
             try {
               return request.cookies.getAll();
             } catch (error) {
-              console.error('[Middleware] Error getting cookies:', error);
+              console.error('[Proxy] Error getting cookies:', error);
               return [];
             }
           },
@@ -55,14 +55,14 @@ export async function middleware(request: NextRequest) {
                 try {
                   response.cookies.set(name, value, options);
                 } catch (cookieError: any) {
-                  console.error('[Middleware] Error setting cookie:', {
+                  console.error('[Proxy] Error setting cookie:', {
                     name,
                     error: cookieError?.message || cookieError,
                   });
                 }
               });
             } catch (error: any) {
-              console.error('[Middleware] Error in setAll cookies:', {
+              console.error('[Proxy] Error in setAll cookies:', {
                 error: error?.message || error,
                 stack: error?.stack,
               });
@@ -76,7 +76,7 @@ export async function middleware(request: NextRequest) {
     try {
       await supabase.auth.getUser();
     } catch (authError: any) {
-      console.error('[Middleware] Auth getUser error:', {
+      console.error('[Proxy] Auth getUser error:', {
         message: authError?.message || authError,
         code: authError?.code,
         status: authError?.status,
@@ -96,16 +96,16 @@ export async function middleware(request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
     
-    console.error('[Middleware] Fatal error:', JSON.stringify(errorDetails, null, 2));
+    console.error('[Proxy] Fatal error:', JSON.stringify(errorDetails, null, 2));
     
     // Add error details to response headers for debugging (visible in browser dev tools)
-    response.headers.set('x-middleware-error', 'true');
-    response.headers.set('x-middleware-error-message', errorDetails.message || 'Unknown error');
+    response.headers.set('x-proxy-error', 'true');
+    response.headers.set('x-proxy-error-message', errorDetails.message || 'Unknown error');
     
     // In development, add more details to headers
     if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development') {
-      response.headers.set('x-middleware-error-details', JSON.stringify(errorDetails));
-      console.error('[Middleware] Full error object:', error);
+      response.headers.set('x-proxy-error-details', JSON.stringify(errorDetails));
+      console.error('[Proxy] Full error object:', error);
     }
   }
 
