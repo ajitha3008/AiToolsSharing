@@ -2,9 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  // Note: Next.js 16 may show a middleware deprecation warning, but middleware.ts
-  // is required and recommended by Supabase for SSR authentication. This warning
-  // can be safely ignored - see MIDDLEWARE_WARNING.md for details.
+  // Middleware runs on Edge Runtime by default - this is correct for Supabase
+  // No need to explicitly set runtime - Edge is the default and required for middleware
 };
 
 export default nextConfig;

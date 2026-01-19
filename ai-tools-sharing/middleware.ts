@@ -1,16 +1,23 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+// Middleware runs on Edge Runtime by default in Next.js
+// This is correct for Supabase SSR - no need to specify runtime
 export async function middleware(request: NextRequest) {
   // Check if environment variables are set
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  // If Supabase is not configured, continue without auth
   if (!supabaseUrl || !supabaseAnonKey) {
-    // If Supabase is not configured, just continue without auth
+    console.error('[Middleware] Missing environment variables:', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!supabaseAnonKey,
+    });
     return NextResponse.next();
   }
 
+  // Create a mutable response object for Edge runtime
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -27,28 +34,38 @@ export async function middleware(request: NextRequest) {
             try {
               return request.cookies.getAll();
             } catch (error) {
+              console.error('[Middleware] Error getting cookies:', error);
               return [];
             }
           },
           setAll(cookiesToSet) {
             try {
-              cookiesToSet.forEach(({ name, value, options }) => {
+              // Update request cookies
+              cookiesToSet.forEach(({ name, value }) => {
                 request.cookies.set(name, value);
               });
+              
+              // Create a new response with updated cookies
               response = NextResponse.next({
-                request: {
-                  headers: request.headers,
-                },
+                request,
               });
+              
+              // Set cookies on response
               cookiesToSet.forEach(({ name, value, options }) => {
                 try {
                   response.cookies.set(name, value, options);
-                } catch (cookieError) {
-                  // Silently fail if cookie setting fails
+                } catch (cookieError: any) {
+                  console.error('[Middleware] Error setting cookie:', {
+                    name,
+                    error: cookieError?.message || cookieError,
+                  });
                 }
               });
-            } catch (error) {
-              // If cookie operations fail, continue with existing response
+            } catch (error: any) {
+              console.error('[Middleware] Error in setAll cookies:', {
+                error: error?.message || error,
+                stack: error?.stack,
+              });
             }
           },
         },
@@ -58,14 +75,38 @@ export async function middleware(request: NextRequest) {
     // Refresh session if expired (non-blocking)
     try {
       await supabase.auth.getUser();
-    } catch (authError) {
-      // Silently fail auth refresh - user can still access the page
-      // This prevents middleware from blocking requests
+    } catch (authError: any) {
+      console.error('[Middleware] Auth getUser error:', {
+        message: authError?.message || authError,
+        code: authError?.code,
+        status: authError?.status,
+      });
+      // Silently fail auth refresh - continue without auth
     }
-  } catch (error) {
-    // If middleware fails completely, still continue with the request
-    // This prevents the entire site from breaking if there's a Supabase issue
-    // Return the response we already created
+  } catch (error: any) {
+    // Log detailed error information - this will show in Vercel logs
+    const errorDetails = {
+      message: error?.message || String(error),
+      name: error?.name,
+      code: error?.code,
+      status: error?.status,
+      stack: error?.stack,
+      url: request.url,
+      method: request.method,
+      timestamp: new Date().toISOString(),
+    };
+    
+    console.error('[Middleware] Fatal error:', JSON.stringify(errorDetails, null, 2));
+    
+    // Add error details to response headers for debugging (visible in browser dev tools)
+    response.headers.set('x-middleware-error', 'true');
+    response.headers.set('x-middleware-error-message', errorDetails.message || 'Unknown error');
+    
+    // In development, add more details to headers
+    if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development') {
+      response.headers.set('x-middleware-error-details', JSON.stringify(errorDetails));
+      console.error('[Middleware] Full error object:', error);
+    }
   }
 
   return response;
