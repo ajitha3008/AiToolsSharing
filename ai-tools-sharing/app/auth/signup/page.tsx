@@ -35,7 +35,7 @@ export default function SignUpPage() {
             username: username || email.split('@')[0],
             fullname: fullname || null,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback',
         },
       });
 

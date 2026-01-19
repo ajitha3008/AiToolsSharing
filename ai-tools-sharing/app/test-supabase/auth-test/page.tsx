@@ -48,7 +48,7 @@ export default function AuthTestPage() {
             username: username || email.split('@')[0],
             fullname: username || '',
           },
-          emailRedirectTo: `${window.location.origin}/test-supabase/auth-test`,
+          emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback',
         },
       });
 

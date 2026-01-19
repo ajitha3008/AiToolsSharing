@@ -4,13 +4,19 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+  const origin = requestUrl.origin;
   const next = requestUrl.searchParams.get('next') || '/';
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (error) {
+      console.error('Error exchanging code for session:', error);
+      return NextResponse.redirect(`${origin}/auth/signin?error=auth_callback_error`);
+    }
   }
 
-  // URL to redirect to after sign in process completes
-  return NextResponse.redirect(new URL(next, request.url));
+  // Redirect to home page or next URL
+  return NextResponse.redirect(`${origin}${next}`);
 }
