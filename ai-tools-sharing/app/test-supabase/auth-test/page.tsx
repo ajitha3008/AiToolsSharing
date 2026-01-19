@@ -114,7 +114,7 @@ export default function AuthTestPage() {
               id: data.user.id,
               username: finalUsername,
               fullname: username || null,
-            })
+            } as any)
             .select()
             .single();
 
@@ -158,7 +158,7 @@ export default function AuthTestPage() {
                 id: data.user.id,
                 username: finalUsername,
                 fullname: username || null,
-              })
+              } as any)
               .select()
               .single();
             

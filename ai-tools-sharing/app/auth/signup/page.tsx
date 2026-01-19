@@ -55,7 +55,7 @@ export default function SignUpPage() {
               id: data.user.id,
               username: finalUsername,
               fullname: fullname || null,
-            });
+            } as any);
 
           if (!profileError) {
             profileCreated = true;
@@ -73,7 +73,7 @@ export default function SignUpPage() {
                 id: data.user.id,
                 username: finalUsername,
                 fullname: fullname || null,
-              });
+              } as any);
             if (!uuidError) profileCreated = true;
             break;
           }

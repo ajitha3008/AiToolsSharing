@@ -39,11 +39,19 @@ function SignInForm() {
         if (profileError && profileError.code === 'PGRST116') {
           // Profile doesn't exist, create it
           const baseUsername = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '').substring(0, 30);
-          await supabase.from('profiles').insert({
-            id: data.user.id,
-            username: baseUsername || 'user_' + data.user.id.substring(0, 8),
-            fullname: null,
-          });
+          const finalUsername = baseUsername || 'user_' + data.user.id.substring(0, 8);
+          
+          const { error: insertError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              username: finalUsername,
+              fullname: null,
+            } as any); // Type assertion to work around type inference issue
+          
+          if (insertError) {
+            console.error('Error creating profile:', insertError);
+          }
         }
       }
 
