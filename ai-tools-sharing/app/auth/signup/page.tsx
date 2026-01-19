@@ -13,6 +13,7 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -83,6 +84,7 @@ export default function SignUpPage() {
       if (data.user) {
         if (data.session) {
           // User is signed in immediately (email confirmation disabled)
+          setHasSession(true);
           setSuccess(true);
           setTimeout(() => {
             router.push('/');
@@ -90,6 +92,7 @@ export default function SignUpPage() {
           }, 1500);
         } else {
           // Email confirmation required
+          setHasSession(false);
           setSuccess(true);
           setError(null);
         }
@@ -114,7 +117,7 @@ export default function SignUpPage() {
             Account created!
           </h1>
           <p className="mb-6 text-zinc-600 dark:text-zinc-400">
-            {supabase.auth.getSession() ? 
+            {hasSession ? 
               'Redirecting you to the home page...' : 
               'Please check your email to verify your account.'}
           </p>
