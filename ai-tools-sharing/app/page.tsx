@@ -111,7 +111,7 @@ export default function Home() {
       }
 
       // Fetch profiles for all unique user IDs
-      const userIds = [...new Set(toolsData.map(tool => tool.user_id))];
+      const userIds = [...new Set((toolsData as any[]).map((tool: any) => tool.user_id))];
       const { data: profilesData } = await supabase
         .from('profiles')
         .select('*')
@@ -126,7 +126,7 @@ export default function Home() {
       }
 
       // Combine tools with profiles
-      let filteredData = toolsData.map(tool => ({
+      let filteredData = (toolsData as any[]).map((tool: any) => ({
         ...tool,
         profiles: profilesMap[tool.user_id] || null,
       }));
