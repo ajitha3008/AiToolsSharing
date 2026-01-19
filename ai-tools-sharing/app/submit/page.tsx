@@ -72,7 +72,7 @@ export default function SubmitWorkflowPage() {
           use_case: useCase.trim(),
           rating: rating || null,
           hashtags: tagsArray,
-        })
+        } as any)
         .select()
         .single();
 
