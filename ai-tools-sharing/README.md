@@ -51,6 +51,13 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
 
+## App screenshots
+
+<img width="1699" height="945" alt="Screenshot 2026-01-26 at 12 40 31 PM" src="https://github.com/user-attachments/assets/d37c573b-d9f7-4774-a767-e9ac833e1b38" />
+<img width="1701" height="961" alt="Screenshot 2026-01-26 at 12 40 46 PM" src="https://github.com/user-attachments/assets/c2bf8669-343f-4357-ab27-e6ddcba4eb06" />
+<img width="1697" height="886" alt="Screenshot 2026-01-26 at 12 41 25 PM" src="https://github.com/user-attachments/assets/b114fe4a-8880-4099-b775-fa496d307ed8" />
+<img width="1697" height="957" alt="Screenshot 2026-01-26 at 12 41 39 PM" src="https://github.com/user-attachments/assets/e855966e-205a-41ad-89a0-4ae2cd7e929c" />
+
 ## Deployment
 
 See `VERCEL_DEPLOYMENT_GUIDE.md` for detailed deployment instructions.
